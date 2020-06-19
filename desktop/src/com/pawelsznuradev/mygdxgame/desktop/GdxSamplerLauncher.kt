@@ -1,8 +1,8 @@
 package com.pawelsznuradev.mygdxgame.desktop
 
-import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas
-import com.badlogic.gdx.utils.reflect.ClassReflection
+import com.pawelsznuradev.mygdxgame.common.SampleFactory
+import com.pawelsznuradev.mygdxgame.common.SampleInfos
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.GridBagConstraints
@@ -31,7 +31,7 @@ class GdxSamplerLauncher : JFrame() {
         title = GdxSamplerLauncher::class.java.simpleName
         minimumSize = windowSize
         size = windowSize
-        isResizable = false
+       // isResizable = false
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 
         createControlPanel()
@@ -62,7 +62,7 @@ class GdxSamplerLauncher : JFrame() {
             weighty = 1.0 // used to fill empty space
         }
 
-        sampleList = JList(arrayOf("com.pawelsznuradev.mygdxgame.InputPollingSample"))
+        sampleList = JList(SampleInfos.getSampleNames())
         sampleList.fixedCellWidth = cellWidth
         sampleList.selectionMode = ListSelectionModel.SINGLE_SELECTION
 
@@ -116,15 +116,17 @@ class GdxSamplerLauncher : JFrame() {
             contentPane.remove(lwjglAWTCanvas?.canvas)
         }
 
-        // get class object by name
-        val sampleClass = ClassReflection.forName(name)
-
-        // create new instance of sample class
-        val sample = ClassReflection.newInstance(sampleClass) as ApplicationListener
-
-        lwjglAWTCanvas = LwjglAWTCanvas(sample)
-        lwjglAWTCanvas?.canvas?.size = Dimension(canvasWidth, windowHeight)
-        contentPane.add(lwjglAWTCanvas?.canvas, BorderLayout.CENTER)
+//        // get class object by name
+//        val sampleClass = ClassReflection.forName(name)
+//
+//        // create new instance of sample class
+//        val sample = ClassReflection.newInstance(sampleClass) as ApplicationListener
+        if(!name.isNullOrBlank()) {
+            val sample = SampleFactory.newSample(name)
+            lwjglAWTCanvas = LwjglAWTCanvas(sample)
+            lwjglAWTCanvas?.canvas?.size = Dimension(canvasWidth, windowHeight)
+            contentPane.add(lwjglAWTCanvas?.canvas, BorderLayout.CENTER)
+        }
         pack()
     }
 }
